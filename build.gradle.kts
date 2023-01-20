@@ -12,6 +12,10 @@ repositories {
     mavenCentral()
 }
 
+dependencies {
+    implementation("net.htmlparser.jericho:jericho-html:3.4")
+}
+
 tasks.withType<KotlinCompile>().all {
     kotlinOptions {
         jvmTarget = "19"
