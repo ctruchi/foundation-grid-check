@@ -14,6 +14,9 @@ repositories {
 
 dependencies {
     implementation("net.htmlparser.jericho:jericho-html:3.4")
+
+    api("io.github.microutils:kotlin-logging:2.1.23")
+    runtimeOnly("ch.qos.logback:logback-classic:1.2.11")
 }
 
 tasks.withType<KotlinCompile>().all {

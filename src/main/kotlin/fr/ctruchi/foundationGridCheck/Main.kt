@@ -1,15 +1,21 @@
 package fr.ctruchi.foundationGridCheck
 
+import mu.KotlinLogging
 import net.htmlparser.jericho.Element
 import net.htmlparser.jericho.Source
 import java.nio.charset.StandardCharsets
 import java.nio.file.Paths
 import kotlin.io.path.readLines
 
+private val logger = KotlinLogging.logger {}
+
 fun main(args: Array<String>) {
     val errors = mutableListOf<FileGridError>()
 
     val folder = Paths.get(args[0])
+
+    logger.info { "Starting check on $folder" }
+
     folder.toFile().walk()
         .filter { it.path.endsWith(".html") }
         .forEach { file ->
@@ -21,6 +27,8 @@ fun main(args: Array<String>) {
                     )
                 }
         }
+
+    logger.info { "Found ${errors.size} errors" }
 
     errors.forEach {
         with(it) {
