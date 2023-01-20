@@ -7,9 +7,30 @@ import java.nio.file.Paths
 import kotlin.io.path.readLines
 
 fun main(args: Array<String>) {
-    val errors = mutableListOf<GridError>()
+    val errors = mutableListOf<FileGridError>()
 
-    val htmlFile = args[0]
+    val folder = Paths.get(args[0])
+    folder.toFile().walk()
+        .filter { it.path.endsWith(".html") }
+        .forEach { file ->
+            errors += checkHtmlFile(file.absolutePath)
+                .map {
+                    FileGridError(
+                        file = file.toRelativeString(folder.toFile()),
+                        error = it
+                    )
+                }
+        }
+
+    errors.forEach {
+        with(it) {
+            println("$file: ${error.error} (${error.debugInfo})")
+        }
+    }
+}
+
+private fun checkHtmlFile(htmlFile: String): List<GridError> {
+    val errors = mutableListOf<GridError>()
 
     val tsFile = htmlFile.replace(".html", ".ts")
     val tsLines = Paths.get(tsFile).readLines(StandardCharsets.UTF_8)
@@ -22,11 +43,7 @@ fun main(args: Array<String>) {
         errors += checkElement(it, parentGridClass)
     }
 
-    errors.forEach {
-        with(it) {
-            println("$error ($debugInfo)")
-        }
-    }
+    return errors
 }
 
 private fun extractGridClassAndCheck(tsLines: List<String>): Pair<String?, List<GridError>> {
